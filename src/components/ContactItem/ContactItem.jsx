@@ -11,7 +11,7 @@ export const ContactItem = ({ id, name, number, onDeleteContact }) => {
         {name}:&nbsp;{number}
       </p>
 
-      <IconButton onClick={onDeleteContact}>
+      <IconButton onClick={onDeleteContact} aria-label="Delete contact">
         <DeleteIcon width="20" height="20" fill="#fff" />
       </IconButton>
     </Item>
