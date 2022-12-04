@@ -1,5 +1,8 @@
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Item, Button } from './ContactItem.styled';
+import { Item } from './ContactItem.styled';
+import { IconButton } from 'components/IconButton';
+import { ReactComponent as DeleteIcon } from '../../icons/vector2.svg';
 
 export const ContactItem = ({ id, name, number, onDeleteContact }) => {
   return (
@@ -7,9 +10,10 @@ export const ContactItem = ({ id, name, number, onDeleteContact }) => {
       <p>
         {name}:&nbsp;{number}
       </p>
-      <Button type="button" onClick={() => onDeleteContact(id)}>
-        Delete contact
-      </Button>
+
+      <IconButton onClick={onDeleteContact}>
+        <DeleteIcon width="20" height="20" fill="#fff" />
+      </IconButton>
     </Item>
   );
 };

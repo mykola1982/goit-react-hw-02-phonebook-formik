@@ -7,6 +7,7 @@ import { Section } from 'components/Section';
 import { ContactForm } from 'components/ContactForm';
 import { Filter } from 'components/Filter';
 import { ContactList } from 'components/ContactList';
+import { Modal } from 'components/Modal';
 
 export class App extends Component {
   state = {
@@ -18,7 +19,31 @@ export class App extends Component {
     ],
 
     filter: '',
+    showModal: false,
   };
+
+  componentDidMount() {
+    try {
+      const contacts = localStorage.getItem('contacts');
+      const parsedContacts = JSON.parse(contacts);
+      if (parsedContacts) {
+        this.setState({ contacts: parsedContacts });
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
+  };
+
   addContact = ({ name, number }) => {
     const { contacts } = this.state;
 
@@ -35,6 +60,7 @@ export class App extends Component {
     this.setState(prevState => ({
       contacts: [newContact, ...prevState.contacts],
     }));
+    this.toggleModal();
   };
 
   handleChangeFilter = event => {
@@ -58,33 +84,27 @@ export class App extends Component {
     }));
   };
 
-  componentDidMount() {
-    try {
-      const contacts = localStorage.getItem('contacts');
-      const parsedContacts = JSON.parse(contacts);
-      if (parsedContacts) {
-        this.setState({ contacts: parsedContacts });
-      }
-    } catch (error) {
-      console.error(error.message);
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.contacts !== prevState.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
   render() {
-    const { filter } = this.state;
+    const { filter, showModal } = this.state;
     const visibleContacts = this.getVisibelContats();
 
     return (
       <Container>
-        <Section title={'Phonebook'}>
-          <ContactForm onSubmit={this.addContact} />
-        </Section>
+        <button type="button" onClick={this.toggleModal}>
+          Open Modal
+        </button>
+        {showModal && (
+          <Modal onClose={this.toggleModal}>
+            <ContactForm onSubmit={this.addContact} />
+            <button type="button" onClick={this.toggleModal}>
+              close Modal
+            </button>
+          </Modal>
+        )}
 
+        <Section title={'Phonebook'}>
+          {/* <ContactForm onSubmit={this.addContact} /> */}
+        </Section>
         <Section title={'Contacts'}>
           <Filter value={filter} onChange={this.handleChangeFilter}></Filter>
           <ContactList
